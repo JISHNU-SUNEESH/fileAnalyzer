@@ -11,7 +11,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_models import ChatHuggingFace
 from langchain_community.llms import HuggingFaceEndpoint
-
+import time
 # Show title and description.
 st.title("📁File Anlyzer")
 st.write(
@@ -105,8 +105,11 @@ else:
 
                 if question:
                     query=create_query_chain.invoke({"question":question})
+                    time.sleep(5)
                     query_result=chain_1.invoke({"question":question})
+                    time.sleep(5)
                     response=chain.invoke({"question":question})
+                    
 
         
 
