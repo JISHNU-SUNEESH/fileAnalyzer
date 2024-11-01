@@ -95,7 +95,7 @@ else:
                     result=itemgetter("query") | execute_query_chain
                     )|answer
                     )
-
+                chain_1= create_query_chain | execute_query_chain
                 question = st.text_area(
                 "Now ask a question about your data",
                 placeholder="Can you give me a short summary?",
@@ -103,8 +103,8 @@ else:
                 )
 
                 if question:
-                    # query=create_query_chain.invoke({"question":question})
-                    # query_result=execute_query_chain.invoke({"question":question})
+                    query=create_query_chain.invoke({"question":question})
+                    query_result=chain_1.invoke({"question":question})
                     response=chain.invoke({"question":question})
 
         
@@ -112,8 +112,8 @@ else:
         # Stream the response to the app using `st.write_stream`.
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
-                    # ex1.write(query)
-                    # ex2.write(query_result)
+                    ex1.write(query)
+                    ex2.write(query_result)
                     st.write(response)
 
             except Exception as e:
