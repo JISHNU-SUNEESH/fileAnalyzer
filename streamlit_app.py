@@ -30,7 +30,7 @@ else:
         llm=ChatMistralAI(model_name='mistral-large-latest',api_key=api_key)
         llm2=HuggingFaceEndpoint(
             repo_id="HuggingFaceH4/zephyr-7b-beta",
-            huggingfacehub_api_token=huggingface_api_key,
+            huggingfacehub_api_token=huggingface_api,
             task="text-generation",
             max_new_tokens=512
 
