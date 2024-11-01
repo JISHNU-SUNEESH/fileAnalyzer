@@ -23,7 +23,7 @@ api_key = st.text_input("API Key", type="password")
 if not api_key:
     st.info("Please add your API key to continue.", icon="🗝️")
 else:
-
+    llm=ChatMistralAI(model_name='mistral-large-latest',api_key=api_key)
     # Create an OpenAI client.
     
 
@@ -38,7 +38,7 @@ else:
 
 
     if uploaded_file :
-            llm=ChatMistralAI(model_name='mistral-large-latest',api_key=api_key)
+            
             df=pd.read_csv(uploaded_file,header=0)
             engine=create_engine('sqlite:///uploaded.db')
             df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
