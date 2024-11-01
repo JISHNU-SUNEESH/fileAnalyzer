@@ -103,8 +103,8 @@ else:
                 )
 
                 if question:
-                    query=create_query_chain.invoke({"question":question})
-                    query_result=execute_query_chain.invoke({"question":question})
+                    # query=create_query_chain.invoke({"question":question})
+                    # query_result=execute_query_chain.invoke({"question":question})
                     response=chain.invoke({"question":question})
 
         
@@ -112,8 +112,8 @@ else:
         # Stream the response to the app using `st.write_stream`.
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
-                    ex1.write(query)
-                    ex2.write(query_result)
+                    # ex1.write(query)
+                    # ex2.write(query_result)
                     st.write(response)
 
             except Exception as e:
