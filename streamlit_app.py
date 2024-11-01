@@ -13,7 +13,7 @@ from langchain_community.chat_models import ChatHuggingFace
 from langchain_community.llms import HuggingFaceEndpoint
 
 # Show title and description.
-st.title("📄 Document question answering")
+st.title("📁File Anlyzer")
 st.write(
     "Upload your data and start Anlyising! "
 )
