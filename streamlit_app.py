@@ -64,8 +64,8 @@ else:
 
                 create_query_prompt=PromptTemplate(
                 input_variables=["input","table_info","top_k"],
-                template="""You are an agent designed to interact with a SQL database.
-                    Your job is to create only the sql query based on the user question.
+                template="""You are an agent designed to interact with a SQLite database.
+                    Your job is to create only the sql query for sqlite database based on the user question.
                     Do not produce any other outputs that the correct sql query.
                     The query must not contain "\". The query should be clean and executable
 
@@ -109,7 +109,7 @@ else:
                     query_result=chain_1.invoke({"question":question})
                     time.sleep(5)
                     response=chain.invoke({"question":question})
-                    
+
 
         
 
