@@ -25,7 +25,7 @@ if not api_key:
 else:
 
     # Create an OpenAI client.
-    llm=ChatMistralAI(model_name='mistral-large-latest',api_key=api_key)
+    
 
     # Let the user upload a file via `st.file_uploader`.
     uploaded_file = st.file_uploader(
@@ -38,6 +38,7 @@ else:
 
 
     if uploaded_file :
+            llm=ChatMistralAI(model_name='mistral-large-latest',api_key=api_key)
             df=pd.read_csv(uploaded_file,header=0)
             engine=create_engine('sqlite:///uploaded.db')
             df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
