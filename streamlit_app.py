@@ -89,7 +89,7 @@ else:
                         Answer: """
                 )
 
-                answer=answer_prompt | chat_model | StrOutputParser()
+                answer=answer_prompt | llm | StrOutputParser()
 
                 chain=(
                     RunnablePassthrough.assign(query=create_query_chain).assign(
