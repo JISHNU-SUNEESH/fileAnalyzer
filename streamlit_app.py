@@ -81,7 +81,7 @@ else:
                 answer_prompt=PromptTemplate.from_template(
                         """
                         Given the following user question, corresponding SQL query, and SQL result, answer the user question.
-                        Provide the answer in a structured format. Don't explain the query used.
+                        Provide the answer in a structured format. Don't explain the query used.If the details are represented in tabular format, use the column names as well.
 
                         Question: {question}
                         SQLQuery: {query}
