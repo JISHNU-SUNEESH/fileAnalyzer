@@ -9,6 +9,9 @@ from langchain_core.prompts import PromptTemplate
 from operator import itemgetter
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+from langchain_community.chat_models import ChatHuggingFace
+from langchain_community.llms import HuggingFaceEndpoint
+
 # Show title and description.
 st.title("📄 Document question answering")
 st.write(
@@ -19,12 +22,21 @@ st.write(
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
 # via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
 api_key=st.secrets["mistralai_api_key"]
-
+huggingface_api=st.secrets["hugginface_api_key"]
 if not api_key:
     st.info("Please add your API key to continue.", icon="🗝️")
 else:
     try:
         llm=ChatMistralAI(model_name='mistral-large-latest',api_key=api_key)
+        llm2=HuggingFaceEndpoint(
+            repo_id="HuggingFaceH4/zephyr-7b-beta",
+            huggingfacehub_api_token=huggingface_api_key,
+            task="text-generation",
+            max_new_tokens=512
+
+)
+
+        chat_model=ChatHuggingFace(llm=llm2)
 
     except Exception as e:
          st.error(str(e))
@@ -76,7 +88,7 @@ else:
                         Answer: """
                 )
 
-                answer=answer_prompt | llm | StrOutputParser()
+                answer=answer_prompt | chat_model | StrOutputParser()
 
                 chain=(
                     RunnablePassthrough.assign(query=create_query_chain).assign(
