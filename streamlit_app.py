@@ -103,9 +103,10 @@ else:
                 )
 
                 if question:
-                    response=chain.invoke({"question":question})
                     query=create_query_chain.invoke({"question":question})
                     query_result=execute_query_chain.invoke({"question":question})
+                    response=chain.invoke({"question":question})
+
         
 
         # Stream the response to the app using `st.write_stream`.
