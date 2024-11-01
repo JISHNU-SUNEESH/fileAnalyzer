@@ -39,7 +39,7 @@ else:
 
     if uploaded_file :
             df=pd.read_csv(uploaded_file,header=0)
-            engine=create_engine('sqlite://uploaded.db')
+            engine=create_engine('sqlite:///uploaded.db')
             df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
             db=SQLDatabase(engine=engine)
     
