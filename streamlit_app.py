@@ -79,15 +79,15 @@ else:
                 )|answer
                 )
 
-    question = st.text_area(
-        "Now ask a question about your data",
-        placeholder="Can you give me a short summary?",
-        disabled=not uploaded_file,
-    )
+            question = st.text_area(
+            "Now ask a question about your data",
+            placeholder="Can you give me a short summary?",
+            disabled=not uploaded_file,
+            )
 
-    if question:
-        response=chain.invoke({"question":question})
+            if question:
+                response=chain.invoke({"question":question})
         
 
         # Stream the response to the app using `st.write_stream`.
-        st.write(response)
+                st.write(response)
