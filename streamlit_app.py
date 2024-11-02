@@ -68,7 +68,7 @@ else:
                     Your job is to create only the sql query for sqlite database based on the user question.
                     Do not produce any other outputs that the correct sql query.
                     The query must not contain "\". The query should be clean and executable. 
-                    If column names have spaces in between handle it in the query to be able to execute in sqlite database.
+                    Always Use double quotes for columns in the query.
                     If there are multiple queries provide the output as a list of queries.
 
                     question: {input}
