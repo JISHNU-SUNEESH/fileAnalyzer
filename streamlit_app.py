@@ -69,6 +69,7 @@ else:
                     Do not produce any other outputs that the correct sql query.
                     The query must not contain "\". The query should be clean and executable. 
                     If column names have spaces in between handle it in the query to be able to execute in sqlite database.
+                    If there are multiple queries provide the output as a list of queries.
 
                     question: {input}
                     table_info: {table_info}
@@ -79,6 +80,11 @@ else:
 
                 create_query_chain=create_sql_query_chain(llm,db,create_query_prompt)
                 execute_query_chain=QuerySQLDataBaseTool(db=db)
+                def execute_multiple_queries(quries:list):
+                     output=[]
+                     for query in quries:
+                          output.append(QuerySQLDataBaseTool(db=db))
+                     return output
                 answer_prompt=PromptTemplate.from_template(
                         """
                         You are a data analyst.
@@ -94,7 +100,7 @@ else:
 
                 chain=(
                     RunnablePassthrough.assign(query=create_query_chain).assign(
-                    result=itemgetter("query") | execute_query_chain
+                    result=itemgetter("query") | execute_multiple_queries
                     )|answer
                     )
                 chain_1= create_query_chain | execute_query_chain
