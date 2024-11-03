@@ -64,48 +64,48 @@ else:
 
                 agent=Agent(llm,db)
                 app=agent.call_agent()
-                create_query_prompt=PromptTemplate(
-                input_variables=["input","table_info","top_k"],
-                template="""You are an agent designed to interact with a SQLite database.
-                    Your job is to create only the sql query for sqlite database based on the user question.
-                    Do not produce any other outputs that the correct sql query.
-                    The query must not contain "\". The query should be clean and executable. 
-                    Always Use double quotes for columns in the query.
-                    If there are multiple queries provide the output as a list of queries.
+                # create_query_prompt=PromptTemplate(
+                # input_variables=["input","table_info","top_k"],
+                # template="""You are an agent designed to interact with a SQLite database.
+                #     Your job is to create only the sql query for sqlite database based on the user question.
+                #     Do not produce any other outputs that the correct sql query.
+                #     The query must not contain "\". The query should be clean and executable. 
+                #     Always Use double quotes for columns in the query.
+                #     If there are multiple queries provide the output as a list of queries.
 
-                    question: {input}
-                    table_info: {table_info}
-                    top_k: {top_k}
-                    query:
-                    """
-                    )
+                #     question: {input}
+                #     table_info: {table_info}
+                #     top_k: {top_k}
+                #     query:
+                #     """
+                #     )
 
-                create_query_chain=create_sql_query_chain(llm,db,create_query_prompt)
-                execute_query_chain=QuerySQLDataBaseTool(db=db)
-                def execute_multiple_queries(quries:list):
-                     output=[]
-                     for query in quries:
-                          output.append(QuerySQLDataBaseTool(db=db))
-                     return output
-                answer_prompt=PromptTemplate.from_template(
-                        """
-                        You are a data analyst.
-                        Given the following user question, corresponding SQL query, and SQL result, answer the user question.
-                        Provide the answer in a structured format. 
-                        Question: {question}
-                        SQLQuery: {query}
-                        SQL Result: {result}
-                        Answer: """
-                )
+                # create_query_chain=create_sql_query_chain(llm,db,create_query_prompt)
+                # execute_query_chain=QuerySQLDataBaseTool(db=db)
+                # def execute_multiple_queries(quries:list):
+                #      output=[]
+                #      for query in quries:
+                #           output.append(QuerySQLDataBaseTool(db=db))
+                #      return output
+                # answer_prompt=PromptTemplate.from_template(
+                #         """
+                #         You are a data analyst.
+                #         Given the following user question, corresponding SQL query, and SQL result, answer the user question.
+                #         Provide the answer in a structured format. 
+                #         Question: {question}
+                #         SQLQuery: {query}
+                #         SQL Result: {result}
+                #         Answer: """
+                # )
 
-                answer=answer_prompt | llm | StrOutputParser()
+                # answer=answer_prompt | llm | StrOutputParser()
 
-                chain=(
-                    RunnablePassthrough.assign(query=create_query_chain).assign(
-                    result=itemgetter("query") | execute_query_chain
-                    )|answer
-                    )
-                chain_1= create_query_chain | execute_query_chain
+                # chain=(
+                #     RunnablePassthrough.assign(query=create_query_chain).assign(
+                #     result=itemgetter("query") | execute_query_chain
+                #     )|answer
+                #     )
+                # chain_1= create_query_chain | execute_query_chain
                 question = st.text_area(
                 "Now ask a question about your data",
                 placeholder="Can you give me a short summary?",
@@ -113,11 +113,11 @@ else:
                 )
 
                 if question:
-                    query=create_query_chain.invoke({"question":question})
-                    time.sleep(5)
-                    query_result=chain_1.invoke({"question":question})
-                    time.sleep(5)
-                    response=chain.invoke({"question":question})
+                    # query=create_query_chain.invoke({"question":question})
+                    # time.sleep(5)
+                    # query_result=chain_1.invoke({"question":question})
+                    # time.sleep(5)
+                    # response=chain.invoke({"question":question})
 
                     inputs = {
                         "question": question
