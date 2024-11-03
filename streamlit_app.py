@@ -62,7 +62,8 @@ else:
                 df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
                 db=SQLDatabase(engine=engine)
 
-                app=Agent(llm,db).agent()
+                agent=Agent(llm,db)
+                app=agent.call_agent()
                 create_query_prompt=PromptTemplate(
                 input_variables=["input","table_info","top_k"],
                 template="""You are an agent designed to interact with a SQLite database.

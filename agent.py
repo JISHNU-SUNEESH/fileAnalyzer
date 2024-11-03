@@ -122,8 +122,8 @@ class Agent:
 
           self.app=self.workflow.compile()
 
-          def agent(self):
-             return self.app
+        def call_agent(self):
+              return self.app
 
 
 
