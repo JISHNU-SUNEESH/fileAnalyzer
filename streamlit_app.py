@@ -12,7 +12,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_models import ChatHuggingFace
 from langchain_community.llms import HuggingFaceEndpoint
 import time
-from agent import agent
+from agent import Agent
 # Show title and description.
 st.title("📁File Anlyzer")
 st.write(
@@ -70,7 +70,7 @@ else:
                 if question:
                     db=SQLDatabase(engine=engine)
                     if db:
-                        app=agent(llm,db)
+                        app=Agent(llm,db)
                     
 
 # Run

@@ -31,7 +31,7 @@ class GraphState(TypedDict):
   answer:str
 
 
-def agent(self,llm,db):
+def Agent(self,llm,db):
         create_query_prompt=PromptTemplate(
         input_variables=["table_info","question","top_k"],
         template="""You are an agent designed to interact with a SQL database.
