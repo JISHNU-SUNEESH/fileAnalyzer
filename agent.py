@@ -31,7 +31,11 @@ class GraphState(TypedDict):
   answer:str
 
 
-def Agent(llm,db):
+class Agent:
+        def __init__(self,llm,db) -> None:
+           self.llm=llm
+           self.db=db
+
         create_query_prompt=PromptTemplate(
         input_variables=["table_info","question","top_k"],
         template="""You are an agent designed to interact with a SQL database.
@@ -117,7 +121,7 @@ def Agent(llm,db):
         workflow.add_edge("generate",END)
 
         app=workflow.compile()
-        return app
+
 
 
 
