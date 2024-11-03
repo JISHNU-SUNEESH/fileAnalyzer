@@ -60,7 +60,7 @@ else:
                 df=pd.read_csv(uploaded_file,header=0)
                 engine=create_engine('sqlite:///uploaded.db')
                 df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
-                db=SQLDatabase(engine=engine)
+                
                 question = st.text_area(
                 "Now ask a question about your data",
                 placeholder="Can you give me a short summary?",
@@ -68,7 +68,7 @@ else:
                 )
 
                 if question:
-                    
+                    db=SQLDatabase(engine=engine)
                     app=agent(llm,db)
                     
 
