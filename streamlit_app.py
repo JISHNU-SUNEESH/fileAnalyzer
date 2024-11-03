@@ -79,14 +79,10 @@ else:
                     }
                     for output in app.stream(inputs):
                         for key, value in output.items():
-                            # Node
-                            pprint(f"Node '{key}':")
-                            # Optional: print full state at each node
-                            # pprint.pprint(value["keys"], indent=2, width=80, depth=None)
-                        pprint("\n---\n")
+                            answer=value.get("answer")
+                            query=value.get('query')
+                            output=value.get('output')
 
-                    # Final generation
-                    pprint(value["answer"])
 
 
 
@@ -95,9 +91,9 @@ else:
         # Stream the response to the app using `st.write_stream`.
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
-                    ex1.write(value["query"])
-                    ex2.write(value["output"])
-                    st.write(value["answer"])
+                    ex1.write(query)
+                    ex2.write(output)
+                    st.write(answer)
 
             except Exception as e:
                  st.error(str(e))
