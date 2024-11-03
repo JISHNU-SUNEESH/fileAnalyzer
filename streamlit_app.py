@@ -93,7 +93,7 @@ else:
                     ex2=st.expander("Query Result")
                     ex1.write(query)
                     ex2.write(output)
-                    st.write(answer)
+                    st.write(str(answer))
 
             except Exception as e:
                  st.error(str(e))
