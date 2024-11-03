@@ -121,10 +121,10 @@ def Agent(llm,db):
 
 
 
-def create_query(state:GraphState,self):
+def create_query(state:GraphState):
   print("--CREATE QUERY--")
   question=state["question"]
-  query=self.create_query_chain.invoke({"question":question})
+  query=Agent.create_query_chain.invoke({"question":question})
   print(f"QUERY = {query}")
   time.sleep(3)
   return {
@@ -132,11 +132,11 @@ def create_query(state:GraphState,self):
       "question":question
       }
 
-def execute_query(state:GraphState,self):
+def execute_query(state:GraphState):
   print("--EXECUTE QUERY--")
   question=state["question"]
   query=state["query"]
-  output=self.execute_query_chain.invoke({"query":query})
+  output=Agent.execute_query_chain.invoke({"query":query})
   print(f"OUTPUT = {output}")
   time.sleep(3)
   return {
@@ -145,13 +145,13 @@ def execute_query(state:GraphState,self):
       "question":question
       }
 
-def generate(state:GraphState,self):
+def generate(state:GraphState):
   print("--GENERATE--")
   question=state["question"]
   query=state["query"]
   output=state["output"]
   time.sleep(3)
-  answer=self.answer_chain.invoke({"question":question,"query":query,"output":output})
+  answer=Agent.answer_chain.invoke({"question":question,"query":query,"output":output})
   print(f"ANSWER = {answer}")
   time.sleep(3)
   return{
@@ -161,25 +161,25 @@ def generate(state:GraphState,self):
       "output":output
       }
 
-def error_re_write(state:GraphState,self):
+def error_re_write(state:GraphState):
   print("--RE-WRITE--")
   question=state["question"]
   query=state["query"]
   output=state["output"]
   time.sleep(3)
-  query=self.re_write_chain.invoke({"output":output})
+  query=Agent.re_write_chain.invoke({"output":output})
   print(f"RE-WRTITTEN QUERY: {query} ")
   return{
       "query":query,
       "question":question
   }
 
-def grade_error(state:GraphState,self):
+def grade_error(state:GraphState):
   print("--GRADE ERROR--")
   question=state["question"]
   query=state["query"]
   output=state["output"]
-  grade=self.error_grade_chain.invoke({"output":output})
+  grade=Agent.error_grade_chain.invoke({"output":output})
   print(f"Error = {grade}")
   return{
       "grade":grade,
@@ -188,7 +188,7 @@ def grade_error(state:GraphState,self):
       "output":output
   }
 
-def decide_generate(state:GraphState,self):
+def decide_generate(state:GraphState):
   print("--DECIDE GENERATE--")
   grade=state["grade"]
   if grade=="yes":
