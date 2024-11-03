@@ -69,7 +69,8 @@ else:
 
                 if question:
                     db=SQLDatabase(engine=engine)
-                    app=agent(llm,db)
+                    if db:
+                        app=agent(llm,db)
                     
 
 # Run
