@@ -12,7 +12,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_models import ChatHuggingFace
 from langchain_community.llms import HuggingFaceEndpoint
 import time
-from agent import Agent
 # Show title and description.
 st.title("📁File Anlyzer")
 st.write(
@@ -60,7 +59,51 @@ else:
                 df=pd.read_csv(uploaded_file,header=0)
                 engine=create_engine('sqlite:///uploaded.db')
                 df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
-                
+                db=SQLDatabase(engine=engine)
+
+
+                create_query_prompt=PromptTemplate(
+                input_variables=["input","table_info","top_k"],
+                template="""You are an agent designed to interact with a SQLite database.
+                    Your job is to create only the sql query for sqlite database based on the user question.
+                    Do not produce any other outputs that the correct sql query.
+                    The query must not contain "\". The query should be clean and executable. 
+                    Always Use double quotes for columns in the query.
+                    If there are multiple queries provide the output as a list of queries.
+
+                    question: {input}
+                    table_info: {table_info}
+                    top_k: {top_k}
+                    query:
+                    """
+                    )
+
+                create_query_chain=create_sql_query_chain(llm,db,create_query_prompt)
+                execute_query_chain=QuerySQLDataBaseTool(db=db)
+                def execute_multiple_queries(quries:list):
+                     output=[]
+                     for query in quries:
+                          output.append(QuerySQLDataBaseTool(db=db))
+                     return output
+                answer_prompt=PromptTemplate.from_template(
+                        """
+                        You are a data analyst.
+                        Given the following user question, corresponding SQL query, and SQL result, answer the user question.
+                        Provide the answer in a structured format. 
+                        Question: {question}
+                        SQLQuery: {query}
+                        SQL Result: {result}
+                        Answer: """
+                )
+
+                answer=answer_prompt | llm | StrOutputParser()
+
+                chain=(
+                    RunnablePassthrough.assign(query=create_query_chain).assign(
+                    result=itemgetter("query") | execute_multiple_queries
+                    )|answer
+                    )
+                chain_1= create_query_chain | execute_query_chain
                 question = st.text_area(
                 "Now ask a question about your data",
                 placeholder="Can you give me a short summary?",
@@ -68,33 +111,21 @@ else:
                 )
 
                 if question:
-                    db=SQLDatabase(engine=engine)
-                    if db:
-                        app=Agent(llm,db)
-                    
-
-# Run
-                    inputs = {
-                        "question": question
-                    }
-                    for output in app.stream(inputs):
-                        for key, value in output.items():
-                            answer=value.get("answer")
-                            query=value.get('query')
-                            output=value.get('output')
-
-
+                    query=create_query_chain.invoke({"question":question})
+                    time.sleep(5)
+                    query_result=chain_1.invoke({"question":question})
+                    time.sleep(5)
+                    response=chain.invoke({"question":question})
 
 
         
 
         # Stream the response to the app using `st.write_stream`.
-                    st.write(str(answer))
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
                     ex1.write(query)
-                    ex2.write(output)
-                    
+                    ex2.write(query_result)
+                    st.write(response)
 
             except Exception as e:
                  st.error(str(e))
