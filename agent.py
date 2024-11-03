@@ -39,7 +39,7 @@ class Agent:
 
 
         
-        def agent_call(self):
+        def _agent_call(self):
             create_query_prompt=PromptTemplate(
             input_variables=["table_info","question","top_k"],
             template="""You are an agent designed to interact with a SQL database.
