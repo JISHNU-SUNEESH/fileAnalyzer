@@ -31,7 +31,7 @@ class GraphState(TypedDict):
   answer:str
 
 
-def Agent(llm,db,self):
+def Agent(llm,db):
         create_query_prompt=PromptTemplate(
         input_variables=["table_info","question","top_k"],
         template="""You are an agent designed to interact with a SQL database.
@@ -94,11 +94,11 @@ def Agent(llm,db,self):
 
         error_grade_chain=error_prompt | llm | error_grade_parser
         workflow=StateGraph(GraphState)
-        workflow.add_node("create_query",self.create_query)
-        workflow.add_node("execute_query",self.execute_query)
-        workflow.add_node("generate",self.generate)
-        workflow.add_node("error_re_write",self.error_re_write)
-        workflow.add_node("grade_error",self.grade_error)
+        workflow.add_node("create_query",create_query)
+        workflow.add_node("execute_query",execute_query)
+        workflow.add_node("generate",generate)
+        workflow.add_node("error_re_write",error_re_write)
+        workflow.add_node("grade_error",grade_error)
 
 
 
