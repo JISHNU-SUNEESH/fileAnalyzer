@@ -33,94 +33,97 @@ class GraphState(TypedDict):
 
 class Agent:
         def __init__(self,llm,db) -> None:
-           self.llm=llm
-           self.db=db
+          self.llm=llm
+          self.db=db
 
-        create_query_prompt=PromptTemplate(
-        input_variables=["table_info","question","top_k"],
-        template="""You are an agent designed to interact with a SQL database.
-        Your job is to create only the sql query based on the user question.
-        Do not produce any other outputs than the correct sql query.
-        The query must not contain "\". The query should be clean and executable
+          self.create_query_prompt=PromptTemplate(
+          input_variables=["table_info","question","top_k"],
+          template="""You are an agent designed to interact with a SQL database.
+          Your job is to create only the sql query based on the user question.
+          Do not produce any other outputs than the correct sql query.
+          The query must not contain "\". The query should be clean and executable
 
-        question: {input}
-        table_info: {table_info}
-        top_k: {top_k}
-        query:
-        """
-    )
+          question: {input}
+          table_info: {table_info}
+          top_k: {top_k}
+          query:
+          """
+      )
 
-        create_query_chain=create_sql_query_chain(llm=llm,db=db,prompt=create_query_prompt)
-        execute_query_chain=QuerySQLDataBaseTool(db=db)
+          self.create_query_chain=create_sql_query_chain(llm=self.llm,db=self.db,prompt=self.create_query_prompt)
+          self.execute_query_chain=QuerySQLDataBaseTool(db=self.db)
 
-        error_re_write_message="""You an SQL query re-writter that resolves the error in
-                                        the current sql query executed based on the error
-                                        output received.Do not produce any other
-                                        outputs than the correct sql query.
-                                        The query must not contain "\".
-                                        The query should be clean and executable in sqlite.
-                                        Only create the modified SQL query as your output."""
+          self.error_re_write_message="""You an SQL query re-writter that resolves the error in
+                                          the current sql query executed based on the error
+                                          output received.Do not produce any other
+                                          outputs than the correct sql query.
+                                          The query must not contain "\".
+                                          The query should be clean and executable in sqlite.
+                                          Only create the modified SQL query as your output."""
 
-        error_re_write_prompt=ChatPromptTemplate.from_messages(
-            [
-                ("system",error_re_write_message),
-                ("human","Here is the error output:{output}, Formulate an error free SQL query")
-            ]
-        )
+          self.error_re_write_prompt=ChatPromptTemplate.from_messages(
+              [
+                  ("system",self.error_re_write_message),
+                  ("human","Here is the error output:{output}, Formulate an error free SQL query")
+              ]
+          )
 
-        re_write_chain=error_re_write_prompt | llm | StrOutputParser()
-
-
-        answer_prompt=PromptTemplate.from_template(
-                    """
-                Given the following user question, corresponding SQL query, and SQL result, answer the user question.
-
-        Question: {question}
-        SQLQuery: {query}
-        SQL Result: {output}
-        Answer: """
-        )
-
-        answer_chain= answer_prompt | llm | StrOutputParser()
+          self.re_write_chain=self.error_re_write_prompt | self.llm | StrOutputParser()
 
 
+          self.answer_prompt=PromptTemplate.from_template(
+                      """
+                  Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
-        error_grade_parser=ErrorGradeParser()
+          Question: {question}
+          SQLQuery: {query}
+          SQL Result: {output}
+          Answer: """
+          )
 
-        error_prompt_message="""You are an error grader assessing whether the received sql query output has an error \n
-            Give a binary score 'yes' or 'no'. Yes' means that the output is an error ouput.
-            Give yes or no,nothing else. No explanations as well. A plain yes or no"""
-
-        error_prompt=ChatPromptTemplate.from_messages([
-            ('system',error_prompt_message),
-            ('human',"Here is the query output: {output}")
-        ])
-
-        error_grade_chain=error_prompt | llm | error_grade_parser
-        workflow=StateGraph(GraphState)
-        workflow.add_node("create_query",create_query)
-        workflow.add_node("execute_query",execute_query)
-        workflow.add_node("generate",generate)
-        workflow.add_node("error_re_write",error_re_write)
-        workflow.add_node("grade_error",grade_error)
+          self.answer_chain= self.answer_prompt | self.llm | StrOutputParser()
 
 
 
-        workflow.add_edge(START,"create_query")
-        workflow.add_edge("create_query","execute_query")
-        workflow.add_edge("execute_query","grade_error")
-        workflow.add_conditional_edges(
-            "grade_error",
-            decide_generate,
-            {
-                "error_re_write":"error_re_write",
-                "generate":"generate",
-            }
-                )
-        workflow.add_edge("error_re_write","execute_query")
-        workflow.add_edge("generate",END)
+          self.error_grade_parser=ErrorGradeParser()
 
-        app=workflow.compile()
+          self.error_prompt_message="""You are an error grader assessing whether the received sql query output has an error \n
+              Give a binary score 'yes' or 'no'. Yes' means that the output is an error ouput.
+              Give yes or no,nothing else. No explanations as well. A plain yes or no"""
+
+          self.error_prompt=ChatPromptTemplate.from_messages([
+              ('system',self.error_prompt_message),
+              ('human',"Here is the query output: {output}")
+          ])
+
+          self.error_grade_chain=self.error_prompt | self.llm | self.error_grade_parser
+          self.workflow=StateGraph(GraphState)
+          self.workflow.add_node("create_query",create_query)
+          self.workflow.add_node("execute_query",execute_query)
+          self.workflow.add_node("generate",generate)
+          self.workflow.add_node("error_re_write",error_re_write)
+          self.workflow.add_node("grade_error",grade_error)
+
+
+
+          self.workflow.add_edge(START,"create_query")
+          self.workflow.add_edge("create_query","execute_query")
+          self.workflow.add_edge("execute_query","grade_error")
+          self.workflow.add_conditional_edges(
+              "grade_error",
+              decide_generate,
+              {
+                  "error_re_write":"error_re_write",
+                  "generate":"generate",
+              }
+                  )
+          self.workflow.add_edge("error_re_write","execute_query")
+          self.workflow.add_edge("generate",END)
+
+          self.app=self.workflow.compile()
+
+          def agent(self):
+             return self.app
 
 
 
