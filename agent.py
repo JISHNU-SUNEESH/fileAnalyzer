@@ -31,7 +31,7 @@ class GraphState(TypedDict):
   answer:str
 
 
-def Agent(llm,db):
+def Agent(llm,db,self):
         create_query_prompt=PromptTemplate(
         input_variables=["table_info","question","top_k"],
         template="""You are an agent designed to interact with a SQL database.
@@ -94,11 +94,11 @@ def Agent(llm,db):
 
         error_grade_chain=error_prompt | llm | error_grade_parser
         workflow=StateGraph(GraphState)
-        workflow.add_node("create_query",create_query)
-        workflow.add_node("execute_query",execute_query)
-        workflow.add_node("generate",generate)
-        workflow.add_node("error_re_write",error_re_write)
-        workflow.add_node("grade_error",grade_error)
+        workflow.add_node("create_query",self.create_query)
+        workflow.add_node("execute_query",self.execute_query)
+        workflow.add_node("generate",self.generate)
+        workflow.add_node("error_re_write",self.error_re_write)
+        workflow.add_node("grade_error",self.grade_error)
 
 
 
@@ -121,7 +121,7 @@ def Agent(llm,db):
 
 
 
-def create_query(self,state:GraphState):
+def create_query(state:GraphState,self):
   print("--CREATE QUERY--")
   question=state["question"]
   query=self.create_query_chain.invoke({"question":question})
@@ -132,7 +132,7 @@ def create_query(self,state:GraphState):
       "question":question
       }
 
-def execute_query(self,state:GraphState):
+def execute_query(state:GraphState,self):
   print("--EXECUTE QUERY--")
   question=state["question"]
   query=state["query"]
@@ -145,7 +145,7 @@ def execute_query(self,state:GraphState):
       "question":question
       }
 
-def generate(self,state:GraphState):
+def generate(state:GraphState,self):
   print("--GENERATE--")
   question=state["question"]
   query=state["query"]
@@ -161,7 +161,7 @@ def generate(self,state:GraphState):
       "output":output
       }
 
-def error_re_write(self,state:GraphState):
+def error_re_write(state:GraphState,self):
   print("--RE-WRITE--")
   question=state["question"]
   query=state["query"]
@@ -174,7 +174,7 @@ def error_re_write(self,state:GraphState):
       "question":question
   }
 
-def grade_error(self,state:GraphState):
+def grade_error(state:GraphState,self):
   print("--GRADE ERROR--")
   question=state["question"]
   query=state["query"]
@@ -188,7 +188,7 @@ def grade_error(self,state:GraphState):
       "output":output
   }
 
-def decide_generate(self,state:GraphState):
+def decide_generate(state:GraphState,self):
   print("--DECIDE GENERATE--")
   grade=state["grade"]
   if grade=="yes":
