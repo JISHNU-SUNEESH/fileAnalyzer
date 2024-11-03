@@ -12,6 +12,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_models import ChatHuggingFace
 from langchain_community.llms import HuggingFaceEndpoint
 import time
+from agent import Agent
 # Show title and description.
 st.title("📁File Anlyzer")
 st.write(
@@ -61,7 +62,7 @@ else:
                 df.to_sql('uploaded_table',con=engine,if_exists='replace',index=False)
                 db=SQLDatabase(engine=engine)
 
-
+                app=Agent(llm,db)
                 create_query_prompt=PromptTemplate(
                 input_variables=["input","table_info","top_k"],
                 template="""You are an agent designed to interact with a SQLite database.
@@ -117,14 +118,23 @@ else:
                     time.sleep(5)
                     response=chain.invoke({"question":question})
 
-
+                    inputs = {
+                        "question": question
+                    }
+                    for output in app.stream(inputs):
+                        for key, value in output.items():
+                            agent_answer=value.get("answer")
+                            agent_query=value.get('query')
+                            agent_output=value.get('output')
         
 
         # Stream the response to the app using `st.write_stream`.
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
+                    ex3=st.expander("Agent output")
                     ex1.write(query)
                     ex2.write(query_result)
+                    ex3.write(agent_answer)
                     st.write(response)
 
             except Exception as e:
