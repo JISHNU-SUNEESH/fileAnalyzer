@@ -100,7 +100,7 @@ else:
 
                 chain=(
                     RunnablePassthrough.assign(query=create_query_chain).assign(
-                    result=itemgetter("query") | execute_multiple_queries
+                    result=itemgetter("query") | execute_query_chain
                     )|answer
                     )
                 chain_1= create_query_chain | execute_query_chain
