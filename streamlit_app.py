@@ -89,11 +89,12 @@ else:
         
 
         # Stream the response to the app using `st.write_stream`.
+                    st.write(str(answer))
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
                     ex1.write(query)
                     ex2.write(output)
-                    st.write(str(answer))
+                    
 
             except Exception as e:
                  st.error(str(e))
