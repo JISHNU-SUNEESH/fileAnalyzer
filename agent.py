@@ -101,6 +101,82 @@ class Agent:
             ])
 
             self.error_grade_chain=error_prompt | self.llm | error_grade_parser
+
+            def create_query(state:GraphState):
+              print("--CREATE QUERY--")
+              question=state["question"]
+              query=self.create_query_chain.invoke({"question":question})
+              print(f"QUERY = {query}")
+              time.sleep(3)
+              return {
+                  "query":query,
+                  "question":question
+                  }
+
+            def execute_query(state:GraphState):
+              print("--EXECUTE QUERY--")
+              question=state["question"]
+              query=state["query"]
+              output=self.execute_query_chain.invoke({"query":query})
+              print(f"OUTPUT = {output}")
+              time.sleep(3)
+              return {
+                  "output":output,
+                  "query":query,
+                  "question":question
+                  }
+
+            def generate(state:GraphState):
+              print("--GENERATE--")
+              question=state["question"]
+              query=state["query"]
+              output=state["output"]
+              time.sleep(3)
+              answer=self.answer_chain.invoke({"question":question,"query":query,"output":output})
+              print(f"ANSWER = {answer}")
+              time.sleep(3)
+              return{
+                  "answer":answer,
+                  "question":question,
+                  "query":query,
+                  "output":output
+                  }
+
+            def error_re_write(state:GraphState):
+              print("--RE-WRITE--")
+              question=state["question"]
+              query=state["query"]
+              output=state["output"]
+              time.sleep(3)
+              query=self.re_write_chain.invoke({"output":output})
+              print(f"RE-WRTITTEN QUERY: {query} ")
+              return{
+                  "query":query,
+                  "question":question
+              }
+
+            def grade_error(state:GraphState):
+              print("--GRADE ERROR--")
+              question=state["question"]
+              query=state["query"]
+              output=state["output"]
+              grade=self.error_grade_chain.invoke({"output":output})
+              print(f"Error = {grade}")
+              return{
+                  "grade":grade,
+                  "question":question,
+                  "query":query,
+                  "output":output
+              }
+
+            def decide_generate(state:GraphState):
+              print("--DECIDE GENERATE--")
+              grade=state["grade"]
+              if grade=="yes":
+                return "error_re_write"
+              else:
+                return "generate"
+
             workflow=StateGraph(GraphState)
             workflow.add_node("create_query",create_query)
             workflow.add_node("execute_query",execute_query)
@@ -130,80 +206,7 @@ class Agent:
 
 
 
-def create_query(state:GraphState):
-  print("--CREATE QUERY--")
-  question=state["question"]
-  query=Agent.create_query_chain.invoke({"question":question})
-  print(f"QUERY = {query}")
-  time.sleep(3)
-  return {
-      "query":query,
-      "question":question
-      }
 
-def execute_query(state:GraphState):
-  print("--EXECUTE QUERY--")
-  question=state["question"]
-  query=state["query"]
-  output=Agent.execute_query_chain.invoke({"query":query})
-  print(f"OUTPUT = {output}")
-  time.sleep(3)
-  return {
-      "output":output,
-      "query":query,
-      "question":question
-      }
-
-def generate(state:GraphState):
-  print("--GENERATE--")
-  question=state["question"]
-  query=state["query"]
-  output=state["output"]
-  time.sleep(3)
-  answer=Agent.answer_chain.invoke({"question":question,"query":query,"output":output})
-  print(f"ANSWER = {answer}")
-  time.sleep(3)
-  return{
-      "answer":answer,
-      "question":question,
-      "query":query,
-      "output":output
-      }
-
-def error_re_write(state:GraphState):
-  print("--RE-WRITE--")
-  question=state["question"]
-  query=state["query"]
-  output=state["output"]
-  time.sleep(3)
-  query=Agent.re_write_chain.invoke({"output":output})
-  print(f"RE-WRTITTEN QUERY: {query} ")
-  return{
-      "query":query,
-      "question":question
-  }
-
-def grade_error(state:GraphState):
-  print("--GRADE ERROR--")
-  question=state["question"]
-  query=state["query"]
-  output=state["output"]
-  grade=Agent.error_grade_chain.invoke({"output":output})
-  print(f"Error = {grade}")
-  return{
-      "grade":grade,
-      "question":question,
-      "query":query,
-      "output":output
-  }
-
-def decide_generate(state:GraphState):
-  print("--DECIDE GENERATE--")
-  grade=state["grade"]
-  if grade=="yes":
-    return "error_re_write"
-  else:
-    return "generate"
 
 
 
