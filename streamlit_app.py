@@ -132,11 +132,9 @@ else:
         # Stream the response to the app using `st.write_stream`.
                     ex1=st.expander("Query Used")
                     ex2=st.expander("Query Result")
-                    ex3=st.expander("Agent output")
-                    ex1.write(query)
-                    ex2.write(query_result)
-                    ex3.write(agent_answer)
-                    st.write(response)
+                    ex1.write(agent_query)
+                    ex2.write(agent_output)
+                    st.write(agent_answer)
 
             except Exception as e:
                  st.error(str(e))
