@@ -63,7 +63,7 @@ else:
                 db=SQLDatabase(engine=engine)
 
                 agent=Agent(llm,db)
-                app=agent.call_agent()
+                app=agent._agent_call()
                 # create_query_prompt=PromptTemplate(
                 # input_variables=["input","table_info","top_k"],
                 # template="""You are an agent designed to interact with a SQLite database.
