@@ -12,7 +12,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_models import ChatHuggingFace
 from langchain_community.llms import HuggingFaceEndpoint
 import time
-from pprint import pprint
 from agent import agent
 # Show title and description.
 st.title("📁File Anlyzer")
