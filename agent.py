@@ -1,7 +1,7 @@
 # from streamlit_app import db,llm
 from langchain.chains import create_sql_query_chain
 from langchain.prompts import PromptTemplate
-from langchain_community.tools import QuerySQLDataBaseTool
+from langchain_community.tools import QuerySQLDatabaseTool
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser,BaseOutputParser
 from typing_extensions import TypedDict
@@ -55,7 +55,7 @@ class Agent:
         )
 
             self.create_query_chain=create_sql_query_chain(llm=self.llm,db=self.db,prompt=create_query_prompt)
-            self.execute_query_chain=QuerySQLDataBaseTool(db=self.db)
+            self.execute_query_chain=QuerySQLDatabaseTool(db=self.db)
 
             error_re_write_message="""You an SQL query re-writter that resolves the error in
                                             the current sql query executed based on the error
