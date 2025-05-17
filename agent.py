@@ -1,7 +1,7 @@
 # from streamlit_app import db,llm
 from langchain.chains import create_sql_query_chain
 from langchain.prompts import PromptTemplate
-from langchain.tools.sql_database.tool import QuerySQLDataBaseTool
+from langchain_community.tools import QuerySQLDataBaseTool
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser,BaseOutputParser
 from typing_extensions import TypedDict
